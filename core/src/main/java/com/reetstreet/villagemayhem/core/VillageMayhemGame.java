@@ -28,8 +28,9 @@ public class VillageMayhemGame extends Game.Default {
   private Group labels = null;
   private Group buttons = null;
   
-  private int gold = 0;
-    
+  private int gold = 500;
+  private int lightMagic =0;
+  
   public VillageMayhemGame() {
     super(33); // call update every 33ms (30 times per second)
   }
@@ -37,9 +38,9 @@ public class VillageMayhemGame extends Game.Default {
   @Override
   public void init() {
     // create and add background image layer
-    //Image bgImage = assets().getImage("images/bg.png");
-    //ImageLayer bgLayer = graphics().createImageLayer(bgImage);
-    //graphics().rootLayer().add(bgLayer);
+    Image bgImage = assets().getImage("images/bg.png");
+    ImageLayer bgLayer = graphics().createImageLayer(bgImage);
+    graphics().rootLayer().add(bgLayer);
     
     controlLayer = graphics().createGroupLayer();
     graphics().rootLayer().add(controlLayer);
@@ -49,12 +50,12 @@ public class VillageMayhemGame extends Game.Default {
 
     // create our demo interface
     Root root = iface.createRoot(AxisLayout.vertical().gap(15), SimpleStyles.newSheet());
-    root.setSize(graphics().width(), graphics().height());
+    root.setSize(200, 150 /* graphics().width(), graphics().height() */);
     root.addStyles(Style.BACKGROUND.is(Background.solid(0xFF99CCFF).inset(5)));
     controlLayer.add(root.layer);
 
     root.add(labels = new Group(AxisLayout.vertical().offStretch()),
-        buttons = new Group(AxisLayout.vertical().offStretch()));
+        buttons = new Group(AxisLayout.horizontal().offStretch()));
 
     Button button = new Button("Clink!");
     button.clicked().connect(new UnitSlot() {
@@ -65,16 +66,29 @@ public class VillageMayhemGame extends Game.Default {
       });
     buttons.add(button);
     this.updateLabels();
+    
+    button = new Button("Bang!");
+    button.clicked().connect(new UnitSlot() {
+        @Override
+        public void onEmit() {
+          giveLightMagic(1);
+        }
+      });
+    buttons.add(button);
   }
   
   private void giveGold(int amount) {
     this.gold += amount;
     this.updateLabels();
   }
-  
+   private void giveLightMagic(int amount) {
+    this.lightMagic += amount;
+    this.updateLabels();
+  }
   private void updateLabels() {
     labels.destroyAll();
     labels.add(new Label("Gold: " + this.gold));
+    labels.add(new Label("Light magic: " + this.lightMagic))
   }
 
   @Override
